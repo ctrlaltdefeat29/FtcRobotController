@@ -35,13 +35,11 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -59,9 +57,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * we will also need to adjust the "PIDF" coefficients with some that are a better fit for our application.
  */
 
-@Autonomous(name = "AutoBlueBigTriangleMidrange", group = "StarterBot")
-@Disabled
-public class AutoBlueBigTriangleMidrange extends LinearOpMode {
+@Autonomous(name = "AutoBlueCloseLaunchNEW", group = "StarterBot")
+//@Disabled
+public class AutoBlueCloseLaunchNEW extends LinearOpMode {
     final double FEED_TIME_SECONDS = 0.20; //The feeder servos run this long when a shot is requested.
     final double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     final double FULL_SPEED = 1.0;
@@ -72,17 +70,20 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
      */
-    final double LAUNCHER_TARGET_VELOCITY = 1525;
-    final double LAUNCHER_MIN_VELOCITY = 1475;
+    final double LAUNCHER_TARGET_VELOCITY = 900;
+    final double LAUNCHER_MIN_VELOCITY = 850;
 
     // Declare OpMode members.
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotorEx launcher = null;
-    private CRServo leftFeeder = null;
-    private CRServo rightFeeder = null;
+    private DcMotorEx launcherR = null;
+    private DcMotorEx launcherL = null;
+    Servo liftServo;
+    Lifter liftArm;
+    DcMotorEx spinMotor;
+    Spinner spinner;
 
     ElapsedTime feederTimer = new ElapsedTime();
 
@@ -108,6 +109,7 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
+    private DistanceDetector detector;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -124,9 +126,13 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "FrontRightDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeftDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BackRightDrive");
-        launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
-        leftFeeder = hardwareMap.get(CRServo.class, "LeftFeeder");
-        rightFeeder = hardwareMap.get(CRServo.class, "RightFeeder");
+        launcherR = hardwareMap.get(DcMotorEx.class, "RightFlyWheel");
+        launcherL = hardwareMap.get(DcMotorEx.class, "LeftFlyWheel");
+        liftServo = hardwareMap.get(Servo.class,"LifterServo");
+        liftArm = new Lifter(liftServo);
+        spinMotor = hardwareMap.get(DcMotorEx.class, "PlateRotator");
+        spinner = new Spinner(spinMotor);
+        detector = new DistanceDetector(hardwareMap, telemetry);
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -147,7 +153,12 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
          * into the port right beside the motor itself. And that the motors polarity is consistent
          * through any wiring.
          */
-        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        launcherR.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
+        launcherR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launcherR.setDirection(DcMotorSimple.Direction.REVERSE);
+//        launcherL.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
+        launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launcherL.setDirection(DcMotorSimple.Direction.FORWARD);
 
         /*
          * Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to
@@ -158,63 +169,96 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
         rightFrontDrive.setZeroPowerBehavior(BRAKE);
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
-        launcher.setZeroPowerBehavior(BRAKE);
-
-        /*
-         * set Feeders to an initial value to initialize the servo controller
-         */
-        leftFeeder.setPower(STOP_SPEED);
-        rightFeeder.setPower(STOP_SPEED);
-        rightFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
-        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        /*
-         * Much like our drivetrain motors, we set the left feeder servo to reverse so that they
-         * both work to feed the ball into the robot.
-         */
-        leftFeeder.setDirection(DcMotorSimple.Direction.REVERSE);
-
 
         /*
          * Tell the driver that initialization is complete.
          */
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        driveForward(-1);
-        sleep(500);
+        //position robot to see obelisk
+        detector.update();
+        double Motif = detector.check_motif();
+        if(Motif == 0.11){
+            int Motif1 = 0;
+            int Motif2 = 1;
+            int Motif3 = 1;
+            telemetry.addData("motif 1", Motif1);
+            telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
+        } else if(Motif == 1.01){
+            int Motif1 = 1;
+            int Motif2 = 0;
+            int Motif3 = 1;
+            telemetry.addData("motif 1", Motif1);
+            telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
+        } else if(Motif == 1.10){
+            int Motif1 = 1;
+            int Motif2 = 1;
+            int Motif3 = 0;
+            telemetry.addData("motif 1", Motif1);
+            telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
+        }
+        driveForward(-0.7);
+        sleep(1000);
         driveForward(0);
 
-        for (int i = 0; i < 3; i++) {
-            launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
-            while(launcher.getVelocity() < LAUNCHER_MIN_VELOCITY) {
-                sleep(100);
+        //CODE FOR SHOOT
+        for(int i=0; i<3; i++) {
+            switch (i) {
+                case 0: //first ball
+                    int j = 0;
+                    while(true) {
+                        //rotate 120 degrees
+                        j++;
+                        if (j > 2) {
+                            break;
+                        }
+                    }
+                    break;
+                case 1: //second ball
+                    j = 0;
+                    while(true) {
+                        //rotate 120 degrees
+                        j++;
+                        if (j > 1) {
+                            break;
+                        }
+                    }
+                    break;
             }
-            leftFeeder.setPower(FULL_SPEED);
-            rightFeeder.setPower(FULL_SPEED);
-            sleep((long) (FEED_TIME_SECONDS * 1000));
-            leftFeeder.setPower(STOP_SPEED);
-            rightFeeder.setPower(STOP_SPEED);
-
-            sleep(1000);
+            launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
+            launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
+            while (launcherL.getVelocity() < LAUNCHER_MIN_VELOCITY ||
+                    launcherR.getVelocity() < LAUNCHER_MIN_VELOCITY) {
+                telemetry.addLine("waiting for velocity");
+            }
+            liftArm.liftAndMoveBack();
+            telemetry.addData("Current position B4: ", spinner.getPosition());
+            spinner.rotate(120);
+            telemetry.addData("Current position after: ", spinner.getPosition());
+            sleep(2500);
         }
-        /*
-         * Show the state and motor powers
-         */
         driveForward(-0.67);
         sleep(400);
         driveForward(0);
-        strafeLeft(-0.55);
-        sleep(620);
+        strafeLeft(0.5);
+        sleep(500);
         strafeLeft(0);
-        /*
-         * Moves our robot backwards and strafes to the inside of the triangle.
-         * V1:FW -0.67 for 1000ms, Strafe Left -0.67 for 1000ms (default option)
-         * V2:Fw -0.55 for 1000ms, Strafe Left -0.67 for 750ms(this moves the bot a shorter distance)
-         * V3:FW -0.67 for 600ms, Strafe Left -0.55 for 800ms (this moves us a small ammount)
-         * V4:FW -0.88 for 580ms, Strafe Left -0.88 for 480ms (Faster option)
-         */
+//        rotateLeft(-0.5);
+//        sleep(500);
+//        rotateLeft(0);
+//        driveForward(0.5);
+//        sleep(400);
+//        driveForward(0);
+       /*
+       * Moves our robot backwards and strafes to the inside of the triangle.
+       * V1:FW -0.67 for 1000ms, Strafe Left -0.67 for 1000ms (default option)
+       * V2:Fw -0.55 for 1000ms, Strafe Left -0.67 for 750ms(this moves the bot a shorter distance)
+       * V3:FW -0.67 for 600ms, Strafe Left -0.55 for 800ms (this moves us a small ammount)
+       * V4:FW -0.88 for 580ms, Strafe Left -0.88 for 480ms (Faster option)
+        */
     }
 
     public void driveForward(double speed) {
@@ -223,17 +267,18 @@ public class AutoBlueBigTriangleMidrange extends LinearOpMode {
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(speed);
     }
-    //    public void rotateRight(double speed) {
-//        leftFrontDrive.setPower(speed);
-//        rightFrontDrive.setPower(-speed);
-//        leftBackDrive.setPower(speed);
-//        rightBackDrive.setPower(-speed);
-//    }
+
     public void strafeLeft(double speed) {
         leftFrontDrive.setPower(-speed);
         rightFrontDrive.setPower(speed);
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(-speed);
+    }
+    public void rotateLeft(double speed){
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(-speed);
+        rightBackDrive.setPower(speed);
     }
 }
 
