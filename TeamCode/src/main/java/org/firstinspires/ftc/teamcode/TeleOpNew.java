@@ -35,8 +35,8 @@ public class TeleOpNew extends OpMode {
     double velocity;
     double minVelocity;
 // must be more than 800, 700
-    final double LAUNCHER_CLOSE_VELOCITY = 900;
-    final double LAUNCHER_MIN_CLOSE_VELOCITY = 850;
+    final double LAUNCHER_CLOSE_VELOCITY = 1000;
+    final double LAUNCHER_MIN_CLOSE_VELOCITY = 990;
 
     final double LAUNCHER_FAR_VELOCITY = 1100;
     final double LAUNCHER_MIN_FAR_VELOCITY = 1050;
@@ -70,10 +70,10 @@ public class TeleOpNew extends OpMode {
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
 //        launcherR.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
-        launcherR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  //      launcherR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherR.setDirection(DcMotorSimple.Direction.REVERSE);
 //        launcherL.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
-        launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+   //     launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherL.setDirection(DcMotorSimple.Direction.FORWARD);
 
         velocity = LAUNCHER_CLOSE_VELOCITY;

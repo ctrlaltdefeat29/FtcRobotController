@@ -15,7 +15,8 @@ public class Lifter {// extends OpMode {
     //START_POSITION = The position where the lifter starts
     final double START_POSITION = 0.01;
     //STOP_POSITION =  The position where the lifter stops
-    final double STOP_POSITION = 0.4;
+    final double STOP_POSITION = 0.25;
+    final double MID_POSITION = 0.15;
 
     public Lifter(Servo lifter){
         this.lifter = lifter;
@@ -24,11 +25,19 @@ public class Lifter {// extends OpMode {
 
 
     public void liftAndMoveBack(){
-        lifter.setPosition(STOP_POSITION);
+        lifter.setPosition(MID_POSITION);
         // The lifter waits for 2 seconds (2 * 1000 miliseconds = 2 seconds )
         // and then the lifter returns to the START_POSITION because it's a loop
         try {
-            sleep(500);
+            sleep(350);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+
+            lifter.setPosition(STOP_POSITION);
+        // The lifter waits for 2 seconds (2 * 1000 miliseconds = 2 seconds )
+        // and then the lifter returns to the START_POSITION because it's a loop
+        try {
+            sleep(150);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
