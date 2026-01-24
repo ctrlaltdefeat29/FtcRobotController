@@ -31,7 +31,7 @@ public class Lifter {// extends OpMode {
         try {
             sleep(350);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e);}
 
             lifter.setPosition(STOP_POSITION);
         // The lifter waits for 2 seconds (2 * 1000 miliseconds = 2 seconds )
