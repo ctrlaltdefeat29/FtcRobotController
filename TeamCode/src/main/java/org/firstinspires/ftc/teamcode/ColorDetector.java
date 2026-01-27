@@ -6,22 +6,35 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class colorTestData {
+public class ColorDetector {
 NormalizedColorSensor colorSensor;
     public enum detectedColor{
     PURPLE,
     GREEN,
     UNKNOWN
     }
-    public void init(HardwareMap hwMap){
+    public ColorDetector(HardwareMap hwMap){
         colorSensor = hwMap.get(NormalizedColorSensor.class, "ColorSensor");
     }
     public detectedColor getDetectedColor(Telemetry telemetry){
         NormalizedRGBA colors = colorSensor.getNormalizedColors(); //returns Red, Blue, Green, and Alpha
         double sum = colors.red + colors.green + colors.blue;
-        telemetry.addData("red", colors.red/sum);
-        telemetry.addData("green", colors.green/sum);
-        telemetry.addData("blue", colors.blue/sum);
+        double red = colors.red/sum;
+        double green = colors.green/sum;
+        double blue = colors.blue/sum;
+        telemetry.addData("red", red);
+        telemetry.addData("green", green);
+        telemetry.addData("blue", blue);
+
+        if(green>red && green>blue && green>=0.42){
+            telemetry.addLine("GREEN");
+            return detectedColor.GREEN;
+        }
+        if(blue>red && blue>green){
+           telemetry.addLine("PURPLE");
+            return detectedColor.PURPLE;
+        }
+        telemetry.addLine("UNKNOWN");
         return detectedColor.UNKNOWN;
     }
 }

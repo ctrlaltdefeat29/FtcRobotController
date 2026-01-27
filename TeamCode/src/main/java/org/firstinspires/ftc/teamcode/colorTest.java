@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name = "colorTest", group = "StarterBot")
 public class colorTest extends OpMode {
-    colorTestData data = new colorTestData();
+    ColorDetector data;
     @Override
     public void init() {
-        data.init(hardwareMap);
+        data = new ColorDetector(hardwareMap);
     }
 
     @Override
