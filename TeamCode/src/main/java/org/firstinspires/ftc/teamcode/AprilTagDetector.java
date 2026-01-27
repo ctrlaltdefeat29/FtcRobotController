@@ -52,7 +52,9 @@ public class AprilTagDetector {
         // go through every item in the list and perform an "action" on it
         for (AprilTagDetection detection : detections) {
             // set the slot at id - 20 to this detection variable
-            detectionMap[detection.id-20] = detection;
+            if(detection.id >= 20) {
+                detectionMap[detection.id - 20] = detection;
+            }
         }
 
     }
