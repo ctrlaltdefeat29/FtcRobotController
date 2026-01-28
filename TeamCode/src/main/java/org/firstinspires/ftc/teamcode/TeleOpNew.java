@@ -41,8 +41,11 @@ public class TeleOpNew extends OpMode {
     final double LAUNCHER_FAR_VELOCITY = 1100;
     final double LAUNCHER_MIN_FAR_VELOCITY = 1050;
     final double STOP_SPEED = 0;
+    private ColorDetector colorDetector;
+    int Motif1;
+    int Motif2;
 
-//    private boolean intake = false;
+    //    private boolean intake = false;
     @Override
     public void init() {
         liftServo = hardwareMap.get(Servo.class,"LifterServo");
@@ -58,6 +61,8 @@ public class TeleOpNew extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeftDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BackRightDrive");
         detector = new DistanceDetector(hardwareMap, telemetry);
+        colorDetector = new ColorDetector(hardwareMap);
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -92,21 +97,16 @@ public class TeleOpNew extends OpMode {
             int Motif3 = 1;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
         } else if(Motif == 1.01){
             int Motif1 = 1;
             int Motif2 = 0;
-            int Motif3 = 1;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
         } else if(Motif == 1.10){
             int Motif1 = 1;
             int Motif2 = 1;
-            int Motif3 = 0;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
         }
         double dist = detector.distanceAssessFromBlue();
         if(velocity != STOP_SPEED) {
@@ -135,16 +135,54 @@ public class TeleOpNew extends OpMode {
 
         if (gamepad1.left_bumper) {
             if (velocity != STOP_SPEED) {
-                for(int i=0; i<3; i++){
-                while (launcherL.getVelocity() < minVelocity ||
-                        launcherR.getVelocity() < minVelocity) {
-                    telemetry.addLine("waiting for velocity");
+                for(int i=0; i<3; i++) {
+                    launcherR.setVelocity(LAUNCHER_CLOSE_VELOCITY);
+                    launcherL.setVelocity(LAUNCHER_CLOSE_VELOCITY);
+                    switch (i) {
+                        case 0: //first ball
+                            int j = 0;
+                            if(Motif1 == 0){
+                                while(colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN) {
+                                    spinner.rotate(120);
+                                    j++;
+                                    if(j>2){break;}
+                                }
+                                if(Motif1 == 1){
+                                    while (colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.PURPLE){
+                                        spinner.rotate(120);
+                                        j++;
+                                        if(j>2){break;}
+                                    }
+                                }
+                            }
+                            break;
+                        case 1: //second ball
+                            j = 0;
+                            if(Motif2 == 0){
+                                while( colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN){
+                                    spinner.rotate(120);
+                                    j++;
+                                    if(j>1){break;}
+                                }
+                                if(Motif2 == 1){
+                                    while( colorDetector.getDetectedColor(telemetry)!= ColorDetector.detectedColor.PURPLE);
+                                    spinner.rotate(120);
+                                    j++;
+                                    if(j>1){break;}
+                                }
+                            }
+                            break;
+                    }
+
+                    while (launcherL.getVelocity() < LAUNCHER_MIN_CLOSE_VELOCITY ||
+                            launcherR.getVelocity() < LAUNCHER_MIN_CLOSE_VELOCITY) {
+                        telemetry.addLine("waiting for velocity");
+                    }
+                    liftArm.liftAndMoveBack();
+                    telemetry.addData("Current position B4: ", spinner.getPosition());
+                    spinner.rotate(120);
+                    telemetry.addData("Current position after: ", spinner.getPosition());
                 }
-                liftArm.liftAndMoveBack();
-                telemetry.addData("Current position B4: ", spinner.getPosition());
-                spinner.rotate(120);
-                telemetry.addData("Current position after: ", spinner.getPosition());
-            }
         }else if (gamepad1.b) {
                 velocity = STOP_SPEED;
 
