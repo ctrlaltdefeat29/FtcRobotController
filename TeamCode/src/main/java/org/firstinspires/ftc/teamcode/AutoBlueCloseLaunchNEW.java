@@ -34,6 +34,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -109,7 +111,11 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
+    int Motif1;
+    int Motif2;
+    int Motif3;
     private DistanceDetector detector;
+    private ColorDetector colorDetector;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -133,6 +139,7 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         spinMotor = hardwareMap.get(DcMotorEx.class, "PlateRotator");
         spinner = new Spinner(spinMotor);
         detector = new DistanceDetector(hardwareMap, telemetry);
+        colorDetector = new ColorDetector(hardwareMap);
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -206,12 +213,21 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
 
         //CODE FOR SHOOT
         for(int i=0; i<3; i++) {
+           ColorDetector.detectedColor ballColor = colorDetector.getDetectedColor(telemetry);
             switch (i) {
                 case 0: //first ball
                     int j = 0;
-                    while(true) {
-                        //rotate 120 degrees
-                        j++;
+                    if(Motif1 == 0){
+                        while(ballColor != ColorDetector.detectedColor.GREEN) {
+                            spinner.rotate(120);
+                            j++;
+                    }
+                        if(Motif1 == 1){
+                            while (ballColor != ColorDetector.detectedColor.PURPLE){
+                                spinner.rotate(120);
+                                j++;
+                            }
+                        }
                         if (j > 2) {
                             break;
                         }
@@ -219,9 +235,16 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
                     break;
                 case 1: //second ball
                     j = 0;
-                    while(true) {
-                        //rotate 120 degrees
-                        j++;
+                    if(Motif2 == 0){
+                        while(ballColor != ColorDetector.detectedColor.GREEN){
+                            spinner.rotate(120);
+                            j++;
+                        }
+                        if(Motif2 == 1){
+                            while(ballColor!= ColorDetector.detectedColor.PURPLE);
+                            spinner.rotate(120);
+                            j++;
+                        }
                         if (j > 1) {
                             break;
                         }
