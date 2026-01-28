@@ -72,8 +72,8 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
      */
-    final double LAUNCHER_TARGET_VELOCITY = 900;
-    final double LAUNCHER_MIN_VELOCITY = 850;
+    final double LAUNCHER_TARGET_VELOCITY = 1000;
+    final double LAUNCHER_MIN_VELOCITY = 990;
 
     // Declare OpMode members.
     private DcMotor leftFrontDrive = null;
@@ -182,6 +182,8 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
          */
         telemetry.addData("Status", "Initialized");
         waitForStart();
+        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
         //position robot to see obelisk
         detector.update();
         double Motif = detector.check_motif();
@@ -207,52 +209,51 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
             telemetry.addData("motif 2", Motif2);
             telemetry.addData("motif 3", Motif3);
         }
+        Motif1 = 0;
+        Motif2 = 1;
+        Motif3 = 1;
         driveForward(-0.7);
         sleep(1000);
         driveForward(0);
 
         //CODE FOR SHOOT
         for(int i=0; i<3; i++) {
-           ColorDetector.detectedColor ballColor = colorDetector.getDetectedColor(telemetry);
             switch (i) {
                 case 0: //first ball
                     int j = 0;
                     if(Motif1 == 0){
-                        while(ballColor != ColorDetector.detectedColor.GREEN) {
+                        while(colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN) {
                             spinner.rotate(120);
                             j++;
+                            if(j>2){break;}
                     }
                         if(Motif1 == 1){
-                            while (ballColor != ColorDetector.detectedColor.PURPLE){
+                            while (colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.PURPLE){
                                 spinner.rotate(120);
                                 j++;
+                                if(j>2){break;}
                             }
-                        }
-                        if (j > 2) {
-                            break;
                         }
                     }
                     break;
                 case 1: //second ball
                     j = 0;
                     if(Motif2 == 0){
-                        while(ballColor != ColorDetector.detectedColor.GREEN){
+                        while( colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN){
                             spinner.rotate(120);
                             j++;
+                            if(j>1){break;}
                         }
                         if(Motif2 == 1){
-                            while(ballColor!= ColorDetector.detectedColor.PURPLE);
+                            while( colorDetector.getDetectedColor(telemetry)!= ColorDetector.detectedColor.PURPLE);
                             spinner.rotate(120);
                             j++;
-                        }
-                        if (j > 1) {
-                            break;
+                            if(j>1){break;}
                         }
                     }
                     break;
             }
-            launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
-            launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
+
             while (launcherL.getVelocity() < LAUNCHER_MIN_VELOCITY ||
                     launcherR.getVelocity() < LAUNCHER_MIN_VELOCITY) {
                 telemetry.addLine("waiting for velocity");
@@ -263,6 +264,8 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
             telemetry.addData("Current position after: ", spinner.getPosition());
             sleep(2500);
         }
+        launcherR.setVelocity(0);
+        launcherL.setVelocity(0);
         driveForward(-0.67);
         sleep(400);
         driveForward(0);
