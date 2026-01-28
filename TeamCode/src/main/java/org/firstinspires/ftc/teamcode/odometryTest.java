@@ -80,6 +80,7 @@ public class odometryTest extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
+    int TICKS_PER_REV;
 
 
     ElapsedTime feederTimer = new ElapsedTime();
@@ -107,7 +108,7 @@ public class odometryTest extends LinearOpMode {
     double leftBackPower;
     double rightBackPower;
     int ticksPerRevolution = 538;
-    double ticksPerInch = ticksPerRevolution/4.09449;
+    private double TICKS_PER_INCH;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -172,19 +173,47 @@ public class odometryTest extends LinearOpMode {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + ticksPerRevolution);
-        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + ticksPerRevolution);
-        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + ticksPerRevolution);
-        rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + ticksPerRevolution);
+
+//        public void (int inchesToMove){
+//            int ticksToMove = (int) ((inchesToMove * TICKS_PER_INCH));
+//            int targetPos = leftFrontDrive.getCurrentPosition() + ticksToMove;
+//            leftFrontDrive.setTargetPosition(targetPos);
+//            leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            leftFrontDrive.setPower(0.5);
+//            while (leftFrontDrive.isBusy()) {
+//                if (targetPos - leftFrontDrive.getCurrentPosition() < 50) {
+//                    leftFrontDrive.setPower(0.2);
+//                }
+//
+//            }
+//        }
+//        public void move(double inchToMove) {
+//        int startPos = spinMotor.getCurrentPosition();
+        TICKS_PER_INCH = Math.ceil(TICKS_PER_REV / 4.09449);
+        int ticksToMove = (int) ((1 * TICKS_PER_INCH));
+        int targetPos = leftFrontDrive.getCurrentPosition() + ticksToMove;
+        targetPos = rightFrontDrive.getCurrentPosition() + ticksToMove;
+        targetPos = leftBackDrive.getCurrentPosition() + ticksToMove;
+        targetPos = rightBackDrive.getCurrentPosition() + ticksToMove;
+        leftFrontDrive.setTargetPosition(targetPos);
+        rightFrontDrive.setTargetPosition(targetPos);
+        leftBackDrive.setTargetPosition(targetPos);
+        rightBackDrive.setTargetPosition(targetPos);
+        leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFrontDrive.setPower(0.5);
+        rightFrontDrive.setPower(0.5);
         leftBackDrive.setPower(0.5);
         rightBackDrive.setPower(0.5);
-        leftFrontDrive.setPower(0.5);
-        rightBackDrive.setPower(0.5);
-
+//            while(spinMotor.isBusy())
+//            {
+//                if(targetPos - spinMotor.getCurrentPosition() < 50)
+//                {
+//                    spinMotor.setPower(0.2);
+//                }
+//    }
     }
 }
 
