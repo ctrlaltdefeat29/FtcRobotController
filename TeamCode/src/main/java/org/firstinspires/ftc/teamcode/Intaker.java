@@ -62,6 +62,13 @@ public class Intaker{
     public void stopIntake()
     {
         intakeMotor.setVelocity(STOP_SPEED);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void backoutBall()
+    {
+        intakeMotor.setVelocity(STOP_SPEED);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setVelocity(MOTOR_VELOCITY);
+    }
 }

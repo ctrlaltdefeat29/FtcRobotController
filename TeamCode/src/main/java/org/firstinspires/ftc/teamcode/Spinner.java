@@ -12,7 +12,7 @@ public class Spinner {
     private final DcMotorEx spinMotor;
 
     // PID constants (Need to tune these)
-    final double kP = 1.2;
+    final double kP = 0.006;
     final double kD = 0.0005;
     final double maxPower = 0.2; // slightly lower for smoothness
 

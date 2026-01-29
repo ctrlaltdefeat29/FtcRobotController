@@ -34,16 +34,15 @@ public class TeleOpNew extends OpMode {
 
     double velocity;
     double minVelocity;
-// must be more than 800, 700
+    // must be more than 800, 700
     final double LAUNCHER_CLOSE_VELOCITY = 1000;
     final double LAUNCHER_MIN_CLOSE_VELOCITY = 990;
 
     final double LAUNCHER_FAR_VELOCITY = 1100;
     final double LAUNCHER_MIN_FAR_VELOCITY = 1050;
     final double STOP_SPEED = 0;
-    private ColorDetector colorDetector;
-    int Motif1;
-    int Motif2;
+
+    boolean intaking;
 
     //    private boolean intake = false;
     @Override
@@ -61,8 +60,8 @@ public class TeleOpNew extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeftDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BackRightDrive");
         detector = new DistanceDetector(hardwareMap, telemetry);
-        colorDetector = new ColorDetector(hardwareMap);
 
+        intaking = false;
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -75,10 +74,10 @@ public class TeleOpNew extends OpMode {
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
 //        launcherR.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
-  //      launcherR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //      launcherR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherR.setDirection(DcMotorSimple.Direction.REVERSE);
 //        launcherL.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
-   //     launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //     launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherL.setDirection(DcMotorSimple.Direction.FORWARD);
 
         velocity = LAUNCHER_CLOSE_VELOCITY;
@@ -97,16 +96,21 @@ public class TeleOpNew extends OpMode {
             int Motif3 = 1;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
         } else if(Motif == 1.01){
             int Motif1 = 1;
             int Motif2 = 0;
+            int Motif3 = 1;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
         } else if(Motif == 1.10){
             int Motif1 = 1;
             int Motif2 = 1;
+            int Motif3 = 0;
             telemetry.addData("motif 1", Motif1);
             telemetry.addData("motif 2", Motif2);
+            telemetry.addData("motif 3", Motif3);
         }
         double dist = detector.distanceAssessFromBlue();
         if(velocity != STOP_SPEED) {
@@ -121,61 +125,30 @@ public class TeleOpNew extends OpMode {
         telemetry.addData("Distance: ", dist);
         telemetry.addData("R velocity", launcherR.getVelocity());
         telemetry.addData("L velocity", launcherL.getVelocity());
-        if (gamepad1.x) {
+        if (gamepad1.x && intaking) {
             telemetry.addLine("stopping intake");
             //stop intake and spin 60
             intaker.stopIntake();
-            spinner.rotate(180);
-        } else if (gamepad1.y) {
+//            spinner.rotate(180);
+            intaking = false;
+        } else if (gamepad1.y && !intaking) {
             telemetry.addLine("starting intake");
             //spin 60 and start intake;
-            spinner.rotate(180);
+//            spinner.rotate(180);
             intaker.runIntake();
+            intaking = true;
+        }
+        else if(gamepad1.b && intaking) {
+            telemetry.addLine("reversing intake");
+//            spinner.rotate(120);
+            intaker.backoutBall();
         }
 
         if (gamepad1.left_bumper) {
             if (velocity != STOP_SPEED) {
-                for(int i=0; i<3; i++) {
-                    launcherR.setVelocity(LAUNCHER_CLOSE_VELOCITY);
-                    launcherL.setVelocity(LAUNCHER_CLOSE_VELOCITY);
-                    switch (i) {
-                        case 0: //first ball
-                            int j = 0;
-                            if(Motif1 == 0){
-                                while(colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN) {
-                                    spinner.rotate(120);
-                                    j++;
-                                    if(j>2){break;}
-                                }
-                                if(Motif1 == 1){
-                                    while (colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.PURPLE){
-                                        spinner.rotate(120);
-                                        j++;
-                                        if(j>2){break;}
-                                    }
-                                }
-                            }
-                            break;
-                        case 1: //second ball
-                            j = 0;
-                            if(Motif2 == 0){
-                                while( colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN){
-                                    spinner.rotate(120);
-                                    j++;
-                                    if(j>1){break;}
-                                }
-                                if(Motif2 == 1){
-                                    while( colorDetector.getDetectedColor(telemetry)!= ColorDetector.detectedColor.PURPLE);
-                                    spinner.rotate(120);
-                                    j++;
-                                    if(j>1){break;}
-                                }
-                            }
-                            break;
-                    }
-
-                    while (launcherL.getVelocity() < LAUNCHER_MIN_CLOSE_VELOCITY ||
-                            launcherR.getVelocity() < LAUNCHER_MIN_CLOSE_VELOCITY) {
+                for(int i=0; i<3; i++){
+                    while (launcherL.getVelocity() < minVelocity ||
+                            launcherR.getVelocity() < minVelocity) {
                         telemetry.addLine("waiting for velocity");
                     }
                     liftArm.liftAndMoveBack();
@@ -183,7 +156,7 @@ public class TeleOpNew extends OpMode {
                     spinner.rotate(120);
                     telemetry.addData("Current position after: ", spinner.getPosition());
                 }
-        }else if (gamepad1.b) {
+            }else if (gamepad1.b) {
                 velocity = STOP_SPEED;
 
             } else if (gamepad1.a) {
