@@ -17,14 +17,11 @@ NormalizedColorSensor colorSensor;
         colorSensor = hwMap.get(NormalizedColorSensor.class, "ColorSensor");
     }
     public detectedColor getDetectedColor(Telemetry telemetry){
-        NormalizedRGBA colors = colorSensor.getNormalizedColors(); //returns Red, Blue, Green, and Alpha
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
         double sum = colors.red + colors.green + colors.blue;
         double red = colors.red/sum;
         double green = colors.green/sum;
         double blue = colors.blue/sum;
-        telemetry.addData("red", red);
-        telemetry.addData("green", green);
-        telemetry.addData("blue", blue);
 
         if(green>red && green>blue && green>=0.42){
             telemetry.addLine("GREEN");
