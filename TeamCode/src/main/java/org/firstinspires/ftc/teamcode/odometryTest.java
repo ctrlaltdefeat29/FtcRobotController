@@ -107,8 +107,7 @@ public class odometryTest extends LinearOpMode {
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
-    int ticksPerRevolution = 538;
-    private double TICKS_PER_INCH;
+    final double TICKS_PER_INCH = 41.87;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -191,8 +190,6 @@ public class odometryTest extends LinearOpMode {
 //        }
 //        public void move(double inchToMove) {
 //        int startPos = spinMotor.getCurrentPosition();
-        TICKS_PER_REV = 538;
-        TICKS_PER_INCH = Math.floor(TICKS_PER_REV / 4.09449);
         int ticksToMove = (int) ((10 * TICKS_PER_INCH));
         int targetPosLF = leftFrontDrive.getCurrentPosition() + ticksToMove;
         int targetPosRF = rightFrontDrive.getCurrentPosition() + ticksToMove;
