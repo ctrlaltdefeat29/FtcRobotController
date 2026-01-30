@@ -177,6 +177,13 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
+
+
+        /*
+         * Tell the driver that initialization is complete.
+         */
+        telemetry.addData("Status", "Initialized");
+        waitForStart();
         detector.update();
         double Motif = detector.check_motif();
         if(Motif == 0.11){
@@ -201,12 +208,6 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
             telemetry.addData("motif 2", Motif2);
             telemetry.addData("motif 3", Motif3);
         }
-
-        /*
-         * Tell the driver that initialization is complete.
-         */
-        telemetry.addData("Status", "Initialized");
-        waitForStart();
         launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
         launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
         //position robot to see obelisk
