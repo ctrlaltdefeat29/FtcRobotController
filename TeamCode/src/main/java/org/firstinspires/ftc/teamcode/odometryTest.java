@@ -76,10 +76,10 @@ public class odometryTest extends LinearOpMode {
 
     // Declare OpMode members.
 
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor leftFrontDrive = null;
-    private DcMotor rightFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightBackDrive = null;
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx rightFrontDrive = null;
     int TICKS_PER_REV;
 
 
@@ -121,10 +121,10 @@ public class odometryTest extends LinearOpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step.
          */
-        leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeftDrive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BackRightDrive");
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "FrontLeftDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FrontRightDrive");
+        leftBackDrive = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
+        leftFrontDrive = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
          * because the axles point in opposite directions. Pushing the left stick forward
@@ -135,8 +135,8 @@ public class odometryTest extends LinearOpMode {
 
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
 
         /*
          * Here we set our launcher to the RUN_USING_ENCODER runmode.
@@ -164,14 +164,16 @@ public class odometryTest extends LinearOpMode {
          */
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(1);
+        leftBackDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
 //        public void (int inchesToMove){
@@ -189,24 +191,45 @@ public class odometryTest extends LinearOpMode {
 //        }
 //        public void move(double inchToMove) {
 //        int startPos = spinMotor.getCurrentPosition();
-        TICKS_PER_INCH = Math.ceil(TICKS_PER_REV / 4.09449);
-        int ticksToMove = (int) ((1 * TICKS_PER_INCH));
-        int targetPos = leftFrontDrive.getCurrentPosition() + ticksToMove;
-        targetPos = rightFrontDrive.getCurrentPosition() + ticksToMove;
-        targetPos = leftBackDrive.getCurrentPosition() + ticksToMove;
-        targetPos = rightBackDrive.getCurrentPosition() + ticksToMove;
-        leftFrontDrive.setTargetPosition(targetPos);
-        rightFrontDrive.setTargetPosition(targetPos);
-        leftBackDrive.setTargetPosition(targetPos);
-        rightBackDrive.setTargetPosition(targetPos);
+        TICKS_PER_REV = 538;
+        TICKS_PER_INCH = Math.floor(TICKS_PER_REV / 4.09449);
+        int ticksToMove = (int) ((10 * TICKS_PER_INCH));
+        int targetPosLF = leftFrontDrive.getCurrentPosition() + ticksToMove;
+        int targetPosRF = rightFrontDrive.getCurrentPosition() + ticksToMove;
+        int targetPosLB = leftBackDrive.getCurrentPosition() + ticksToMove;
+        int targetPosRB = rightBackDrive.getCurrentPosition() + ticksToMove;
+        telemetry.addData("calc: ",(int) ((10 * TICKS_PER_INCH)));
+
+
+        leftFrontDrive.setTargetPosition(targetPosLF);
+        rightFrontDrive.setTargetPosition(targetPosRF);
+        leftBackDrive.setTargetPosition(targetPosLB);
+        rightBackDrive.setTargetPosition(targetPosRB);
         leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         leftFrontDrive.setPower(0.5);
         rightFrontDrive.setPower(0.5);
         leftBackDrive.setPower(0.5);
         rightBackDrive.setPower(0.5);
+//        sleep(5000);
+
+        while(leftBackDrive.isBusy() || leftFrontDrive.isBusy() || rightBackDrive.isBusy() || rightFrontDrive.isBusy()){
+            telemetry.addLine("busy");
+            telemetry.addData("FrontLeft", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("BackLeft", leftBackDrive.getCurrentPosition());
+            telemetry.addData("FrontRight", rightFrontDrive.getCurrentPosition());
+            telemetry.addData("BackRight", rightBackDrive.getCurrentPosition());
+            telemetry.addData("calc: ",(int) ((10 * TICKS_PER_INCH)));
+
+            telemetry.update();
+        }
+
+        telemetry.addLine("Finished");
+        telemetry.update();
+        sleep(5000);
 //            while(spinMotor.isBusy())
 //            {
 //                if(targetPos - spinMotor.getCurrentPosition() < 50)
