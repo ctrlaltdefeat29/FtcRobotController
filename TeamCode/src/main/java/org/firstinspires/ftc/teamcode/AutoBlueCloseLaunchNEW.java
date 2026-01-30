@@ -184,29 +184,34 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
          */
         telemetry.addData("Status", "Initialized");
         waitForStart();
-        detector.update();
-        double Motif = detector.check_motif();
-        if(Motif == 0.11){
-            int Motif1 = 0;
-            int Motif2 = 1;
-            int Motif3 = 1;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
-        } else if(Motif == 1.01){
-            int Motif1 = 1;
-            int Motif2 = 0;
-            int Motif3 = 1;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
-        } else if(Motif == 1.10){
-            int Motif1 = 1;
-            int Motif2 = 1;
-            int Motif3 = 0;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
+        while(true) {
+            detector.update();
+            double Motif = detector.check_motif();
+            if (Motif == 0.11) {
+                int Motif1 = 0;
+                int Motif2 = 1;
+                int Motif3 = 1;
+                telemetry.addData("motif 1", Motif1);
+                telemetry.addData("motif 2", Motif2);
+                telemetry.addData("motif 3", Motif3);
+                break;
+            } else if (Motif == 1.01) {
+                int Motif1 = 1;
+                int Motif2 = 0;
+                int Motif3 = 1;
+                telemetry.addData("motif 1", Motif1);
+                telemetry.addData("motif 2", Motif2);
+                telemetry.addData("motif 3", Motif3);
+                break;
+            } else if (Motif == 1.10) {
+                int Motif1 = 1;
+                int Motif2 = 1;
+                int Motif3 = 0;
+                telemetry.addData("motif 1", Motif1);
+                telemetry.addData("motif 2", Motif2);
+                telemetry.addData("motif 3", Motif3);
+                break;
+            }
         }
         launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
         launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
