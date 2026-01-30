@@ -42,8 +42,8 @@ public class TeleOpNew extends OpMode {
     final double LAUNCHER_CLOSE_VELOCITY = 1000;
     final double LAUNCHER_MIN_CLOSE_VELOCITY = 990;
 
-    final double LAUNCHER_FAR_VELOCITY = 1100;
-    final double LAUNCHER_MIN_FAR_VELOCITY = 1090;
+    final double LAUNCHER_FAR_VELOCITY = 1150;
+    final double LAUNCHER_MIN_FAR_VELOCITY = 1140;
     final double STOP_SPEED = 0;
 
     private boolean intaking;
