@@ -128,11 +128,13 @@ public class TeleOpNew extends OpMode {
             if (gamepad1.left_bumper) {
                 for (int i = 0; i < 3; i++) {
                     if (colorDetector.getDetectedColor(telemetry) == ColorDetector.detectedColor.UNKNOWN) {
-                        spinner.rotate(120);
-                        try {
-                            sleep(200);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        if(i != 2) {
+                            spinner.rotate(120);
+                            try {
+                                sleep(200);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                         continue;
                     }
@@ -142,8 +144,10 @@ public class TeleOpNew extends OpMode {
                     }
                     liftArm.liftAndMoveBack();
                     telemetry.addData("Current position B4: ", spinner.getPosition());
-                    spinner.rotate(120);
-                    telemetry.addData("Current position after: ", spinner.getPosition());
+                    if(i!=2) {
+                        spinner.rotate(120);
+                        telemetry.addData("Current position after: ", spinner.getPosition());
+                    }
                 }
             }
             if (gamepad1.dpad_right) {
