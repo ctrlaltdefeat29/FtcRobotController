@@ -218,6 +218,8 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
 
         //CODE FOR SHOOT
         for(int i=0; i<3; i++) {
+            launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
+            launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
             switch (i) {
                 case 0: //first ball
                     int j = 0;
@@ -237,18 +239,30 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
                     }
                     break;
                 case 1: //second ball
-                    j = 0;
                     if(Motif2 == 0){
                         while( colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN){
                             spinner.rotate(120);
-                            j++;
-                            if(j>1){break;}
                         }
                         if(Motif2 == 1){
                             while( colorDetector.getDetectedColor(telemetry)!= ColorDetector.detectedColor.PURPLE);
                             spinner.rotate(120);
+                        }
+                    }
+                    break;
+                case 2: //third ball
+                    j = 0;
+                    if(Motif1 == 0){
+                        while(colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN) {
+                            spinner.rotate(120);
                             j++;
-                            if(j>1){break;}
+                            if(j>2){break;}
+                        }
+                        if(Motif1 == 1){
+                            while (colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.PURPLE){
+                                spinner.rotate(120);
+                                j++;
+                                if(j>2){break;}
+                            }
                         }
                     }
                     break;
@@ -262,7 +276,6 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
             telemetry.addData("Current position B4: ", spinner.getPosition());
             spinner.rotate(120);
             telemetry.addData("Current position after: ", spinner.getPosition());
-            sleep(2500);
         }
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);
