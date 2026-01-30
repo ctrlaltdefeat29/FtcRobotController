@@ -177,14 +177,6 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
-        /*
-         * Tell the driver that initialization is complete.
-         */
-        telemetry.addData("Status", "Initialized");
-        waitForStart();
-        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
-        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
-        //position robot to see obelisk
         detector.update();
         double Motif = detector.check_motif();
         if(Motif == 0.11){
@@ -209,9 +201,18 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
             telemetry.addData("motif 2", Motif2);
             telemetry.addData("motif 3", Motif3);
         }
-        Motif1 = 0;
-        Motif2 = 1;
-        Motif3 = 1;
+
+        /*
+         * Tell the driver that initialization is complete.
+         */
+        telemetry.addData("Status", "Initialized");
+        waitForStart();
+        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        //position robot to see obelisk
+//        Motif1 = 0;
+//        Motif2 = 1;
+//        Motif3 = 1;
         driveForward(-0.7);
         sleep(1000);
         driveForward(0);
@@ -248,16 +249,17 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
                             spinner.rotate(120);
                         }
                     }
+                    spinner.rotate(120);
                     break;
                 case 2: //third ball
                     j = 0;
-                    if(Motif1 == 0){
+                    if(Motif3 == 0){
                         while(colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.GREEN) {
                             spinner.rotate(120);
                             j++;
                             if(j>2){break;}
                         }
-                        if(Motif1 == 1){
+                        if(Motif3 == 1){
                             while (colorDetector.getDetectedColor(telemetry) != ColorDetector.detectedColor.PURPLE){
                                 spinner.rotate(120);
                                 j++;
