@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,6 +29,8 @@ public class TeleOpNew extends OpMode {
 
     DistanceDetector detector;
 
+    ColorDetector colorDetector;
+
     double leftFrontPower;
     double rightFrontPower;
     double leftBackPower;
@@ -39,10 +43,10 @@ public class TeleOpNew extends OpMode {
     final double LAUNCHER_MIN_CLOSE_VELOCITY = 990;
 
     final double LAUNCHER_FAR_VELOCITY = 1100;
-    final double LAUNCHER_MIN_FAR_VELOCITY = 1050;
+    final double LAUNCHER_MIN_FAR_VELOCITY = 1090;
     final double STOP_SPEED = 0;
 
-    boolean intaking;
+    private boolean intaking;
 
     //    private boolean intake = false;
     @Override
@@ -60,7 +64,7 @@ public class TeleOpNew extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "BackLeftDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BackRightDrive");
         detector = new DistanceDetector(hardwareMap, telemetry);
-
+        colorDetector = new ColorDetector(hardwareMap);
         intaking = false;
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -89,64 +93,49 @@ public class TeleOpNew extends OpMode {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         runLauncher();
         detector.update();
-        double Motif = detector.check_motif();
-        if(Motif == 0.11){
-            int Motif1 = 0;
-            int Motif2 = 1;
-            int Motif3 = 1;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
-        } else if(Motif == 1.01){
-            int Motif1 = 1;
-            int Motif2 = 0;
-            int Motif3 = 1;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
-        } else if(Motif == 1.10){
-            int Motif1 = 1;
-            int Motif2 = 1;
-            int Motif3 = 0;
-            telemetry.addData("motif 1", Motif1);
-            telemetry.addData("motif 2", Motif2);
-            telemetry.addData("motif 3", Motif3);
-        }
+
         double dist = detector.distanceAssessFromBlue();
-        if(velocity != STOP_SPEED) {
-            if (dist > 75.0) {
-                velocity = LAUNCHER_FAR_VELOCITY;
-                minVelocity = LAUNCHER_MIN_FAR_VELOCITY;
-            } else {
-                velocity = LAUNCHER_CLOSE_VELOCITY;
-                minVelocity = LAUNCHER_MIN_CLOSE_VELOCITY;
-            }
+        if (dist > 75.0) {
+            velocity = LAUNCHER_FAR_VELOCITY;
+            minVelocity = LAUNCHER_MIN_FAR_VELOCITY;
+        } else {
+            velocity = LAUNCHER_CLOSE_VELOCITY;
+            minVelocity = LAUNCHER_MIN_CLOSE_VELOCITY;
         }
         telemetry.addData("Distance: ", dist);
         telemetry.addData("R velocity", launcherR.getVelocity());
         telemetry.addData("L velocity", launcherL.getVelocity());
-        if (gamepad1.x && intaking) {
-            telemetry.addLine("stopping intake");
-            //stop intake and spin 60
-            intaker.stopIntake();
-//            spinner.rotate(180);
-            intaking = false;
-        } else if (gamepad1.y && !intaking) {
+
+        if (gamepad1.y && !intaking) {
             telemetry.addLine("starting intake");
-            //spin 60 and start intake;
-//            spinner.rotate(180);
             intaker.runIntake();
             intaking = true;
         }
-        else if(gamepad1.b && intaking) {
+
+        if (gamepad1.x && intaking) {
+            telemetry.addLine("stopping intake");
+            intaker.stopIntake();
+            spinner.rotate(120);
+            intaking = false;
+        }
+
+        if(gamepad1.b && intaking) {
             telemetry.addLine("reversing intake");
-//            spinner.rotate(120);
             intaker.backoutBall();
         }
 
-        if (gamepad1.left_bumper) {
-            if (velocity != STOP_SPEED) {
-                for(int i=0; i<3; i++){
+        if(!intaking) {
+            if (gamepad1.left_bumper) {
+                for (int i = 0; i < 3; i++) {
+                    if (colorDetector.getDetectedColor(telemetry) == ColorDetector.detectedColor.UNKNOWN) {
+                        spinner.rotate(120);
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        continue;
+                    }
                     while (launcherL.getVelocity() < minVelocity ||
                             launcherR.getVelocity() < minVelocity) {
                         telemetry.addLine("waiting for velocity");
@@ -156,24 +145,21 @@ public class TeleOpNew extends OpMode {
                     spinner.rotate(120);
                     telemetry.addData("Current position after: ", spinner.getPosition());
                 }
-            }else if (gamepad1.b) {
-                velocity = STOP_SPEED;
-
-            } else if (gamepad1.a) {
-                velocity = LAUNCHER_CLOSE_VELOCITY;
             }
-//            else if (gamepad1.dpad_right) {
-//                    telemetry.addData("Current position B4: ", spinner.getPosition());
-//                    spinner.rotate(120);
-//                    telemetry.addData("Current position after: ", spinner.getPosition());
-//                } else if (gamepad1.dpad_left) {
-//                    telemetry.addData("Current position B4: ", spinner.getPosition());
-//                    spinner.rotate(-60);
-//                    telemetry.addData("Current position after: ", spinner.getPosition());
-//                }
-        }
-    }
+            if (gamepad1.dpad_right) {
+                telemetry.addData("Current position B4: ", spinner.getPosition());
+                spinner.rotate(230);
+                telemetry.addData("Current position after: ", spinner.getPosition());
+            }
 
+            if (gamepad1.dpad_left) {
+                telemetry.addData("Current position B4: ", spinner.getPosition());
+                spinner.rotate(250);
+                telemetry.addData("Current position after: ", spinner.getPosition());
+            }
+        }
+
+    }
 
     public void runLauncher(){
         launcherR.setVelocity(velocity);
@@ -192,16 +178,10 @@ public class TeleOpNew extends OpMode {
         rightFrontPower = (forward - strafe - rotate) / denominator;
         leftBackPower = (forward - strafe + rotate) / denominator;
         rightBackPower = (forward + strafe - rotate) / denominator;
-        telemetry.addData("Forward:", forward);
-        telemetry.addData("Strafe:", strafe);
-        telemetry.addData("Rotate:", rotate);
-        telemetry.addData("Denominator:", denominator);
 
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
-
-
     }
 }
