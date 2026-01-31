@@ -8,6 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ColorDetector {
 NormalizedColorSensor colorSensor;
+
+
+
     public enum detectedColor{
     PURPLE,
     GREEN,

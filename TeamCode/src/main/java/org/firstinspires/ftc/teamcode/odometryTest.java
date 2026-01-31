@@ -189,11 +189,11 @@ public class odometryTest extends LinearOpMode {
 //
 //            }
 //        }
-//        public void move(double inchToMove) {
-//        int startPos = spinMotor.getCurrentPosition();
+        public void move(int inchToMove) {
+
         TICKS_PER_REV = 538;
         TICKS_PER_INCH = Math.floor(TICKS_PER_REV / 4.09449);
-        int ticksToMove = (int) ((10 * TICKS_PER_INCH));
+        int ticksToMove = (int) (inchToMove * TICKS_PER_INCH));
         int targetPosLF = leftFrontDrive.getCurrentPosition() + ticksToMove;
         int targetPosRF = rightFrontDrive.getCurrentPosition() + ticksToMove;
         int targetPosLB = leftBackDrive.getCurrentPosition() + ticksToMove;
@@ -229,6 +229,7 @@ public class odometryTest extends LinearOpMode {
 
         telemetry.addLine("Finished");
         telemetry.update();
+        }
         sleep(5000);
 //            while(spinMotor.isBusy())
 //            {

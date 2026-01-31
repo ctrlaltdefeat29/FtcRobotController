@@ -116,6 +116,7 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
     int Motif3;
     private DistanceDetector detector;
     private ColorDetector colorDetector;
+    private odometryTest odometry;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -184,6 +185,7 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
          */
         telemetry.addData("Status", "Initialized");
         waitForStart();
+        odometry.move
         while(true) {
             detector.update();
             double Motif = detector.check_motif();
@@ -219,9 +221,9 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
 //        Motif1 = 0;
 //        Motif2 = 1;
 //        Motif3 = 1;
-        driveForward(-0.7);
-        sleep(1000);
-        driveForward(0);
+//        driveForward(-0.7);
+//        sleep(1000);
+//        driveForward(0);
 
         //CODE FOR SHOOT
         for(int i=0; i<3; i++) {
