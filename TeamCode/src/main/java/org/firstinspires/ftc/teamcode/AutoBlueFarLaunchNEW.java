@@ -152,12 +152,12 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
         rotateLeft(-0.4);
         sleep(turnTimeMs);
         intaker.runAutoIntake();
-        odometry.moveBackward(39);
+        odometry.moveBackward(38);
         odometry.moveForward(12);
         intaker.backoutBall();
         sleep(200);
         intaker.stopIntake();
-        odometry.moveForward(27);
+        odometry.moveForward(26);
 
         rotateLeft(0.4);
         sleep(turnTimeMs);
@@ -169,14 +169,14 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
 
         odometry.moveBackward(24);
 
-        turnTimeMs=250;
+        turnTimeMs=230;
         rotateLeft(0.4);
         sleep(turnTimeMs);
         rotateLeft(0);
 
         Shoot();
 
-        odometry.moveForward(20);
+        odometry.moveForward(10);
 
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);
