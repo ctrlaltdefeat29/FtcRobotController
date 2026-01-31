@@ -14,7 +14,7 @@ public class Lifter {
     //START_POSITION = The position where the lifter starts
     final double START_POSITION = 0.01;
     //STOP_POSITION =  The position where the lifter stops
-    final double STOP_POSITION = 0.25;
+    final double STOP_POSITION = 0.28;
     //MID_POSITION =  The position where the lifter waits to align ball
     final double MID_POSITION = 0.15;
 

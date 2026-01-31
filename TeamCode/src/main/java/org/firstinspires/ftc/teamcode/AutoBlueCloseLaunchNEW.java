@@ -142,18 +142,16 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
 
-        odometry.moveBackward(6);
+//        odometry.moveBackward(6);
 
         intaker.runAutoIntake();
-
-
-        odometry.moveBackward(36);
+        odometry.moveBackward(40);
 
         //intaker.backoutBall();
 
         //sleep(300);
 
-        sleep(200);
+//        sleep(200);
 
         odometry.moveForward(12);
         intaker.backoutBall();
@@ -161,12 +159,12 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         intaker.stopIntake();
 
 
-        spinner.rotate(240);
-        spinner.rotate(240);
+        spinner.rotate(360);
+//        spinner.rotate(240);
 
-        odometry.moveForward(24);
+        odometry.moveForward(28);
 
-        turnTimeMs = 1500;  // tune this for YOUR robot
+        turnTimeMs = 1520;  // tune this for YOUR robot
 
         // Left turn
         leftFrontDrive.setPower(-0.4);
@@ -184,9 +182,7 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         Shoot();
 
         strafeLeft(0.4);
-        sleep(600);
-
-
+        sleep(1000);
 
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);
@@ -219,11 +215,7 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
                 telemetry.addLine("waiting for velocity");
             }
             liftArm.liftAndMoveBack();
-            telemetry.addData("Current position B4: ", spinner.getPosition());
-            if (index != 2) {
-                spinner.rotate(120);
-                telemetry.addData("Current position after: ", spinner.getPosition());
-            }
+            spinner.rotate(120);
         }
     }
 }

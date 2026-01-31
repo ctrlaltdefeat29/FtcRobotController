@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "AutoBlueFarLaunchNEW", group = "StarterBot")
@@ -54,8 +55,8 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
      */
-    final double LAUNCHER_TARGET_VELOCITY = 1150;
-    final double LAUNCHER_MIN_VELOCITY = 1140;
+    final double LAUNCHER_TARGET_VELOCITY = 1180;
+    final double LAUNCHER_MIN_VELOCITY = 1170;
 
     // Declare OpMode members.
     private DcMotorEx leftFrontDrive = null;
@@ -104,8 +105,10 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
 
+        launcherR.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(240, 0, 0, 10));
+
         launcherR.setDirection(DcMotorSimple.Direction.REVERSE);
-//        launcherL.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
+        launcherL.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(240, 0, 0, 10));
         //     launcherL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherL.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -123,7 +126,7 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
         //SHOOT
 
 
-        long turnTimeMs = 1000;  // tune this for YOUR robot
+        long turnTimeMs = 300;  // tune this for YOUR robot
 
         // Left turn
         rotateLeft(0.4);
@@ -142,6 +145,38 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
         strafeLeft(0.65);
         sleep(500);
         strafeLeft(0);
+
+        odometry.moveForward(18);
+
+        turnTimeMs = 1000;
+        rotateLeft(-0.4);
+        sleep(turnTimeMs);
+        intaker.runAutoIntake();
+        odometry.moveBackward(39);
+        odometry.moveForward(12);
+        intaker.backoutBall();
+        sleep(200);
+        intaker.stopIntake();
+        odometry.moveForward(27);
+
+        rotateLeft(0.4);
+        sleep(turnTimeMs);
+        rotateLeft(0);
+
+        strafeLeft(-0.65);
+        sleep(350);
+        strafeLeft(0);
+
+        odometry.moveBackward(24);
+
+        turnTimeMs=250;
+        rotateLeft(0.4);
+        sleep(turnTimeMs);
+        rotateLeft(0);
+
+        Shoot();
+
+        odometry.moveForward(20);
 
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);

@@ -239,5 +239,9 @@ public class TeleOpNew extends OpMode {
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
+
+        telemetry.addData("forward", forward);
+        telemetry.addData("strafe", strafe);
+        telemetry.addData("rotate", rotate);
     }
 }
