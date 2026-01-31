@@ -8,46 +8,33 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-//@TeleOp
-public class Lifter {// extends OpMode {
-    //lifter = the bootkicker that lifts the ball into the shooter
+//the bootkicker that lifts the ball into the shooter
+public class Lifter {
     private final Servo lifter;
     //START_POSITION = The position where the lifter starts
     final double START_POSITION = 0.01;
     //STOP_POSITION =  The position where the lifter stops
     final double STOP_POSITION = 0.25;
+    //MID_POSITION =  The position where the lifter waits to align ball
     final double MID_POSITION = 0.15;
 
     public Lifter(Servo lifter){
         this.lifter = lifter;
         this.lifter.setPosition(START_POSITION);
     }
-
-
     public void liftAndMoveBack(){
         lifter.setPosition(MID_POSITION);
-        // The lifter waits for 2 seconds (2 * 1000 miliseconds = 2 seconds )
-        // and then the lifter returns to the START_POSITION because it's a loop
         try {
             sleep(350);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);}
 
-            lifter.setPosition(STOP_POSITION);
-        // The lifter waits for 2 seconds (2 * 1000 miliseconds = 2 seconds )
-        // and then the lifter returns to the START_POSITION because it's a loop
+        lifter.setPosition(STOP_POSITION);
         try {
             sleep(150);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-//        do {
-//            try {
-//                sleep(1);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } while (!(lifter.getPosition() >= STOP_POSITION));
         lifter.setPosition(START_POSITION);
         try {
             sleep(500);
