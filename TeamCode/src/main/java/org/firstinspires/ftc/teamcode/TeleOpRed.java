@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-import static java.lang.Thread.sleep;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,11 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-
-@TeleOp(name = "TeleOpNew", group = "StarterBot")
-@Disabled
-public class TeleOpNew extends OpMode {
+@TeleOp(name = "TeleOpRed", group = "StarterBot")
+//@Disabled
+public class TeleOpRed extends OpMode {
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -107,8 +102,8 @@ public class TeleOpNew extends OpMode {
         runLauncher();
         detector.update();
 
-        double yaw = detector.getAngleToBlueTag();
-        double dist = detector.distanceAssessFromBlue();
+        double yaw = detector.getAngleToRedTag();
+        double dist = detector.distanceAssessFromRed();
         if (dist > 75.0) {
             velocity = LAUNCHER_FAR_VELOCITY;
             minVelocity = LAUNCHER_MIN_FAR_VELOCITY;

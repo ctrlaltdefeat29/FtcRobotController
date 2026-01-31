@@ -54,6 +54,28 @@ public class DistanceDetector{
             return 0;
     }
 
+    public double getAngleToRedTag() {
+        if (vision.seesTag(24)) {
+            AprilTagDetection detection = vision.getTag(24);
+            AprilTagPoseFtc pos = detection.ftcPose;
+            return pos.yaw;
+        }
+        return 90;
+    }
+
+    public double distanceAssessFromRed() {
+        if (vision.seesTag(24)) {
+            AprilTagDetection detection = vision.getTag(24);
+            double distance = distance_assess(detection);
+            //correlate distance to the speed of the flywheel
+            //if distance >= 35 then shoot normal (target velocity+ 0.3*distance)
+            //else if distance < target distance then shoot lighter (target velocity - 0.3*distance)
+            telemetry.addData("Red Goal", distance );
+            return distance;
+        }
+        return 0;
+    }
+
     public double check_motif() {
         if (vision.seesTag(21)) {
             // Tag 21- GPP motif. Set motif to Green, Purple, Purple
