@@ -54,8 +54,8 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
      */
-    final double LAUNCHER_TARGET_VELOCITY = 1000;
-    final double LAUNCHER_MIN_VELOCITY = 990;
+    final double LAUNCHER_TARGET_VELOCITY = 1150;
+    final double LAUNCHER_MIN_VELOCITY = 1140;
 
     // Declare OpMode members.
     private DcMotorEx leftFrontDrive = null;
@@ -121,28 +121,26 @@ public class AutoBlueFarLaunchNEW extends LinearOpMode {
         odometry.moveForward(12);
 
         //SHOOT
-        Shoot();
 
-        long turnTimeMs = 1550;  // tune this for YOUR robot
+
+        long turnTimeMs = 1000;  // tune this for YOUR robot
 
         // Left turn
-//        leftFrontDrive.setPower(0.4);
-//        leftBackDrive.setPower(0.4);
-//        rightFrontDrive.setPower(-0.4);
-//        rightBackDrive.setPower(-0.4);
-//
-//        sleep(turnTimeMs);
-//
-//        // Stop
-//        leftFrontDrive.setPower(0);
-//        leftBackDrive.setPower(0);
-//        rightFrontDrive.setPower(0);
-//        rightBackDrive.setPower(0);
+        rotateLeft(0.4);
+        sleep(turnTimeMs);
+        rotateLeft(0);
+
+        Shoot();
 
         //rotate back to normal
+        rotateLeft(-0.4);
+        sleep(turnTimeMs);
+        rotateLeft(0);
+
         //rotate 90 degrees
+
         strafeLeft(0.65);
-        sleep(250);
+        sleep(500);
         strafeLeft(0);
 
         launcherR.setVelocity(0);
