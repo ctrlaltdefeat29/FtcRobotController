@@ -59,6 +59,10 @@ public class Intaker{
         intakeMotor.setVelocity(MOTOR_VELOCITY);
     }
 
+    public void runAutoIntake() {
+        intakeMotor.setVelocity(500);
+    }
+
     public void stopIntake()
     {
         intakeMotor.setVelocity(STOP_SPEED);

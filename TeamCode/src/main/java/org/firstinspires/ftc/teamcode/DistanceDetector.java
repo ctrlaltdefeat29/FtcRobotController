@@ -32,6 +32,15 @@ public class DistanceDetector{
         return distance;
     }
 
+    public double getAngleToBlueTag() {
+        if (vision.seesTag(20)) {
+            AprilTagDetection detection = vision.getTag(20);
+            AprilTagPoseFtc pos = detection.ftcPose;
+            return pos.yaw;
+        }
+        return 90;
+    }
+
     public double distanceAssessFromBlue() {
         if (vision.seesTag(20)) {
             AprilTagDetection detection = vision.getTag(20);

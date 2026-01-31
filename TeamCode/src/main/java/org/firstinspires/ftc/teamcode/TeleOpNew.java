@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+
 @TeleOp(name = "TeleOpNew", group = "StarterBot")
 //@Disabled
 public class TeleOpNew extends OpMode {
@@ -47,6 +49,8 @@ public class TeleOpNew extends OpMode {
     final double STOP_SPEED = 0;
 
     private boolean intaking;
+
+    private ColorDetector.detectedColor[] motifValues;
 
     //    private boolean intake = false;
     @Override
@@ -86,6 +90,10 @@ public class TeleOpNew extends OpMode {
 
         velocity = LAUNCHER_CLOSE_VELOCITY;
         minVelocity = LAUNCHER_MIN_CLOSE_VELOCITY;
+        motifValues = new ColorDetector.detectedColor[3];
+        motifValues[0] = ColorDetector.detectedColor.UNKNOWN;
+        motifValues[1] = ColorDetector.detectedColor.UNKNOWN;
+        motifValues[2] = ColorDetector.detectedColor.UNKNOWN;
     }
 
     @Override
@@ -94,6 +102,7 @@ public class TeleOpNew extends OpMode {
         runLauncher();
         detector.update();
 
+        double yaw = detector.getAngleToBlueTag();
         double dist = detector.distanceAssessFromBlue();
         if (dist > 75.0) {
             velocity = LAUNCHER_FAR_VELOCITY;
@@ -124,11 +133,30 @@ public class TeleOpNew extends OpMode {
             intaker.backoutBall();
         }
 
+        if(gamepad2.x) {
+            motifValues[0] = ColorDetector.detectedColor.GREEN;
+            motifValues[1] = ColorDetector.detectedColor.PURPLE;
+            motifValues[2] = ColorDetector.detectedColor.PURPLE;
+        }
+        if(gamepad2.y) {
+            motifValues[0] = ColorDetector.detectedColor.PURPLE;
+            motifValues[1] = ColorDetector.detectedColor.GREEN;
+            motifValues[2] = ColorDetector.detectedColor.PURPLE;
+        }
+        if(gamepad2.b) {
+            motifValues[0] = ColorDetector.detectedColor.PURPLE;
+            motifValues[1] = ColorDetector.detectedColor.PURPLE;
+            motifValues[2] = ColorDetector.detectedColor.GREEN;
+        }
         if(!intaking) {
+            if(Math.abs(yaw) <= 5.0) {
+                gamepad1.rumble(1.0, 1.0, 200);
+            }
             if (gamepad1.left_bumper) {
-                for (int i = 0; i < 3; i++) {
+                for (int index = 0; index < 3; ) {
+                    ColorDetector.detectedColor interestedColor = motifValues[index];
                     if (colorDetector.getDetectedColor(telemetry) == ColorDetector.detectedColor.UNKNOWN) {
-                        if(i != 2) {
+                        if(index != 2) {
                             spinner.rotate(120);
                             try {
                                 sleep(200);
@@ -136,17 +164,28 @@ public class TeleOpNew extends OpMode {
                                 throw new RuntimeException(e);
                             }
                         }
+                        index++;
                         continue;
                     }
-                    while (launcherL.getVelocity() < minVelocity ||
-                            launcherR.getVelocity() < minVelocity) {
-                        telemetry.addLine("waiting for velocity");
+                    if(ColorDetector.detectedColor.UNKNOWN == interestedColor) {
+                        Shoot(index);
+                        index++;
                     }
-                    liftArm.liftAndMoveBack();
-                    telemetry.addData("Current position B4: ", spinner.getPosition());
-                    if(i!=2) {
-                        spinner.rotate(120);
-                        telemetry.addData("Current position after: ", spinner.getPosition());
+                    else if(colorDetector.getDetectedColor(telemetry) == interestedColor) {
+                        Shoot(index);
+                        index++;
+                    }
+                    else {
+                        for(int subIndex = index; subIndex < 3; ++subIndex) {
+                            if (colorDetector.getDetectedColor(telemetry) != interestedColor) {
+                                spinner.rotate(120);
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        Shoot(index);
+                        index++;
                     }
                 }
             }
@@ -163,6 +202,19 @@ public class TeleOpNew extends OpMode {
             }
         }
 
+    }
+
+    private void Shoot(int index) {
+        while (launcherL.getVelocity() < minVelocity ||
+                launcherR.getVelocity() < minVelocity) {
+            telemetry.addLine("waiting for velocity");
+        }
+        liftArm.liftAndMoveBack();
+        telemetry.addData("Current position B4: ", spinner.getPosition());
+        if(index!=2) {
+            spinner.rotate(120);
+            telemetry.addData("Current position after: ", spinner.getPosition());
+        }
     }
 
     public void runLauncher(){
