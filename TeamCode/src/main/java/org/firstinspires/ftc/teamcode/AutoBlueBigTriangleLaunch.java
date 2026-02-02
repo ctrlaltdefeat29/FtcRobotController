@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -87,6 +88,7 @@ public class AutoBlueBigTriangleLaunch extends LinearOpMode {
     Lifter liftArm;
     DcMotorEx spinMotor;
     Spinner spinner;
+    ColorDetector colorDetector;
 
     ElapsedTime feederTimer = new ElapsedTime();
 
@@ -134,6 +136,7 @@ public class AutoBlueBigTriangleLaunch extends LinearOpMode {
         liftArm = new Lifter(liftServo);
         spinMotor = hardwareMap.get(DcMotorEx.class, "PlateRotator");
         spinner = new Spinner(spinMotor);
+        colorDetector = new ColorDetector(hardwareMap);
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -182,6 +185,10 @@ public class AutoBlueBigTriangleLaunch extends LinearOpMode {
 
         //CODE FOR SHOOT
         for(int i=0; i<3; i++) {
+            ColorDetector.detectedColor color = colorDetector.getDetectedColor(telemetry);
+            if(i==0){
+                while(color != ColorDetector.detectedColor.PURPLE);
+            }
             launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
             launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
             while (launcherL.getVelocity() < LAUNCHER_MIN_VELOCITY ||

@@ -113,10 +113,10 @@ public class OdometryMovement {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftFrontDrive.setPower(0.6);
-        rightFrontDrive.setPower(0.6);
-        leftBackDrive.setPower(0.6);
-        rightBackDrive.setPower(0.6);
+        leftFrontDrive.setPower(0.85);
+        rightFrontDrive.setPower(0.85);
+        leftBackDrive.setPower(0.85);
+        rightBackDrive.setPower(0.85);
 
         while(opMode.opModeIsActive() &&
                 (leftBackDrive.isBusy() || leftFrontDrive.isBusy() || rightBackDrive.isBusy() || rightFrontDrive.isBusy())) {

@@ -58,8 +58,8 @@ public class AutoRedCloseLaunchNEW extends LinearOpMode {
      * velocity. Here we are setting the target, and minimum velocity that the launcher should run
      * at. The minimum velocity is a threshold for determining when to fire.
      */
-    final double LAUNCHER_TARGET_VELOCITY = 1000;
-    final double LAUNCHER_MIN_VELOCITY = 990;
+    final double LAUNCHER_TARGET_VELOCITY = 950;
+    final double LAUNCHER_MIN_VELOCITY = 940;
 
     // Declare OpMode members.
     private DcMotorEx leftFrontDrive = null;
@@ -120,36 +120,28 @@ public class AutoRedCloseLaunchNEW extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         waitForStart();
 
-        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
-        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY + 20);
+        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY + 20);
 
-        odometry.moveBackward(50);
+        odometry.moveBackward(48);
 
         //SHOOT
         Shoot();
 
-        //odometry.moveBackward(6);
+        odometry.moveBackward(9);
 
         long turnTimeMs = 1550;  // tune this for YOUR robot
 
         // Left turn
-        leftFrontDrive.setPower(-0.4);
-        leftBackDrive.setPower(-0.4);
-        rightFrontDrive.setPower(0.4);
-        rightBackDrive.setPower(0.4);
-
+        rotateLeft(0.4);
         sleep(turnTimeMs);
-
         // Stop
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        rotateLeft(0);
 
 //        odometry.moveBackward(6);
 
         intaker.runAutoIntake();
-        odometry.moveBackward(40);
+        odometry.moveBackward(50);
 
         //intaker.backoutBall();
 
@@ -158,7 +150,7 @@ public class AutoRedCloseLaunchNEW extends LinearOpMode {
 //        sleep(200);
 
         odometry.moveForward(12);
-        intaker.backoutBall();
+//        intaker.backoutBall();
         sleep(200);
         intaker.stopIntake();
 
@@ -166,29 +158,25 @@ public class AutoRedCloseLaunchNEW extends LinearOpMode {
         spinner.rotate(360);
 //        spinner.rotate(240);
 
-        odometry.moveForward(28);
+        odometry.moveForward(38);
 
-        turnTimeMs = 1520;  // tune this for YOUR robot
+        turnTimeMs = 1540;  // tune this for YOUR robot
 
         // Left turn
-        leftFrontDrive.setPower(0.4);
-        leftBackDrive.setPower(0.4);
-        rightFrontDrive.setPower(-0.4);
-        rightBackDrive.setPower(-0.4);
-
+        rotateLeft(-0.4);
         sleep(turnTimeMs);
 
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        rotateLeft(0);
 
        // odometry.moveForward(6);
 
         Shoot();
 
-        strafeLeft(0.4);
-        sleep(1000);
+
+
+        strafeLeft(-0.6);
+        sleep(900);
+        strafeLeft(0);
 
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);
@@ -216,8 +204,10 @@ public class AutoRedCloseLaunchNEW extends LinearOpMode {
 
     private void Shoot() {
         for(int index=0; index<3; ++index) {
-            while (launcherL.getVelocity() < LAUNCHER_MIN_VELOCITY ||
-                    launcherR.getVelocity() < LAUNCHER_MIN_VELOCITY) {
+            launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY + 20);
+            launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY + 20);
+            while (launcherL.getVelocity() < LAUNCHER_MIN_VELOCITY+20 ||
+                    launcherR.getVelocity() < LAUNCHER_MIN_VELOCITY+20) {
                 telemetry.addLine("waiting for velocity");
             }
             liftArm.liftAndMoveBack();

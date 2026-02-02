@@ -118,34 +118,30 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         waitForStart();
 
-        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
-        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY +20);
+        launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY +20);
 
-        odometry.moveBackward(50);
+        odometry.moveBackward(48);
 
         //SHOOT
         Shoot();
 
-        long turnTimeMs = 1550;  // tune this for YOUR robot
+        long turnTimeMs = 1530;  // tune this for YOUR robot
 
-        // Left turn
-        leftFrontDrive.setPower(0.4);
-        leftBackDrive.setPower(0.4);
-        rightFrontDrive.setPower(-0.4);
-        rightBackDrive.setPower(-0.4);
+        odometry.moveBackward(9);
+
+        // right turn
+        rotateLeft(-0.4);
 
         sleep(turnTimeMs);
 
         // Stop
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        rotateLeft(0);
 
 //        odometry.moveBackward(6);
 
         intaker.runAutoIntake();
-        odometry.moveBackward(40);
+        odometry.moveBackward(50);
 
         //intaker.backoutBall();
 
@@ -162,22 +158,15 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         spinner.rotate(360);
 //        spinner.rotate(240);
 
-        odometry.moveForward(28);
+        odometry.moveForward(38);
 
-        turnTimeMs = 1520;  // tune this for YOUR robot
+        turnTimeMs = 1540;  // tune this for YOUR robot
 
         // Left turn
-        leftFrontDrive.setPower(-0.4);
-        leftBackDrive.setPower(-0.4);
-        rightFrontDrive.setPower(0.4);
-        rightBackDrive.setPower(0.4);
-
+        rotateLeft(0.4);
         sleep(turnTimeMs);
 
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        rotateLeft(0);
 
         Shoot();
 
@@ -188,12 +177,6 @@ public class AutoBlueCloseLaunchNEW extends LinearOpMode {
         launcherL.setVelocity(0);
     }
 
-    public void driveForward(double speed) {
-        leftFrontDrive.setPower(speed);
-        rightFrontDrive.setPower(speed);
-        leftBackDrive.setPower(speed);
-        rightBackDrive.setPower(speed);
-    }
 
     public void strafeLeft(double speed) {
         leftFrontDrive.setPower(-speed);

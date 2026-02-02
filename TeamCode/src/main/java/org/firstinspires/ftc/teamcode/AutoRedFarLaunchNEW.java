@@ -121,14 +121,11 @@ public class AutoRedFarLaunchNEW extends LinearOpMode {
         launcherR.setVelocity(LAUNCHER_TARGET_VELOCITY);
         launcherL.setVelocity(LAUNCHER_TARGET_VELOCITY);
 
-        odometry.moveForward(12);
-
-        //SHOOT
-
+        odometry.moveForward(8);
 
         long turnTimeMs = 300;  // tune this for YOUR robot
 
-        // Left turn
+        // Right turn
         rotateLeft(-0.4);
         sleep(turnTimeMs);
         rotateLeft(0);
@@ -139,44 +136,45 @@ public class AutoRedFarLaunchNEW extends LinearOpMode {
         rotateLeft(0.4);
         sleep(turnTimeMs);
         rotateLeft(0);
-
         //rotate 90 degrees
 
+        odometry.moveBackward(6);
+
         strafeLeft(-0.65);
-        sleep(500);
+        sleep(1000);
         strafeLeft(0);
 
-        odometry.moveForward(18);
-
-        turnTimeMs = 1000;
-        rotateLeft(0.4);
-        sleep(turnTimeMs);
-        intaker.runAutoIntake();
-        odometry.moveBackward(38);
-        odometry.moveForward(12);
-        intaker.backoutBall();
-        sleep(200);
-        intaker.stopIntake();
-        odometry.moveForward(26);
-
-        rotateLeft(-0.4);
-        sleep(turnTimeMs);
-        rotateLeft(0);
-
-        strafeLeft(0.65);
-        sleep(350);
-        strafeLeft(0);
-
-        odometry.moveBackward(24);
-
-        turnTimeMs=230;
-        rotateLeft(-0.4);
-        sleep(turnTimeMs);
-        rotateLeft(0);
-
-        Shoot();
-
-        odometry.moveForward(10);
+//        odometry.moveForward(15);
+//
+//        turnTimeMs = 1000;
+//        rotateLeft(0.4);
+//        sleep(turnTimeMs);
+//        intaker.runAutoIntake();
+//        odometry.moveBackward(38);
+//        odometry.moveForward(12);
+//        intaker.backoutBall();
+//        sleep(200);
+//        intaker.stopIntake();
+//        odometry.moveForward(26);
+//
+//        rotateLeft(-0.4);
+//        sleep(turnTimeMs);
+//        rotateLeft(0);
+//
+//        strafeLeft(0.65);
+//        sleep(350);
+//        strafeLeft(0);
+//
+//        odometry.moveBackward(24);
+//
+//        turnTimeMs=230;
+//        rotateLeft(-0.4);
+//        sleep(turnTimeMs);
+//        rotateLeft(0);
+//
+//        Shoot();
+//
+//        odometry.moveForward(10);
 
         launcherR.setVelocity(0);
         launcherL.setVelocity(0);
